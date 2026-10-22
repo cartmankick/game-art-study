@@ -1,0 +1,66 @@
+[
+  {
+    "issue": "001",
+    "game": "Stardew Valley",
+    "file": "assets/001/stardew-screenshot.jpg",
+    "source": "https://store.steampowered.com/app/413150/Stardew_Valley/",
+    "kind": "browser_screenshot_of_official_game_screenshot",
+    "description": "Official farm screenshot with warm wooden farmhouse, crops and animals."
+  },
+  {
+    "issue": "001",
+    "game": "Coffee Talk",
+    "file": "assets/001/coffee-talk-screenshot.jpg",
+    "source": "https://www.togeproductions.com/project/coffee-talk/",
+    "kind": "browser_screenshot_of_official_game_screenshot",
+    "description": "Official 2019 development-build screenshot: green-haired Freya at counter, rain and dark windows; development-build mark visible."
+  },
+  {
+    "issue": "001",
+    "game": "Littlewood",
+    "file": "assets/001/littlewood-screenshot.jpg",
+    "source": "https://store.steampowered.com/app/894940/Littlewood/",
+    "kind": "browser_screenshot_of_official_game_screenshot",
+    "description": "Official village screenshot with simple buildings, warm paths and green ground. No top date UI is visible in this replacement."
+  },
+  {
+    "issue": "002",
+    "file": "assets/002/short-hike-0.jpg",
+    "source": "https://store.steampowered.com/app/1055540/",
+    "originalImage": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1055540/ss_f2123fea859e299736a3e99d130238c784d53e75.1920x1080.jpg?t=1777758958",
+    "kind": "game_screenshot",
+    "description": "A Short Hike 秋色营地"
+  },
+  {
+    "issue": "002",
+    "file": "assets/002/toem-1.jpg",
+    "source": "https://store.steampowered.com/app/1307580/",
+    "originalImage": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1307580/ss_3c5c560a2627d6d35f69a138ec3159517c662e44.1920x1080.jpg?t=1791210023",
+    "kind": "game_screenshot",
+    "description": "TOEM 黑白院落"
+  },
+  {
+    "issue": "002",
+    "file": "assets/002/toem-0.jpg",
+    "source": "https://store.steampowered.com/app/1307580/",
+    "originalImage": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1307580/ss_452053e6976add5d6690c6f5dc227d3fd4bda26d.1920x1080.jpg?t=1791210023",
+    "kind": "game_screenshot",
+    "description": "TOEM 图鉴界面"
+  },
+  {
+    "issue": "002",
+    "file": "assets/002/alba-1.jpg",
+    "source": "https://store.steampowered.com/app/1337010/",
+    "originalImage": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1337010/ss_ce424baa7b22e8436e71b98b8c4b5c9c151ebb6c.1920x1080.jpg?t=1789140377",
+    "kind": "game_screenshot",
+    "description": "Alba 林间倒木与松鼠"
+  },
+  {
+    "issue": "002",
+    "file": "assets/002/alba-0.jpg",
+    "source": "https://store.steampowered.com/app/1337010/",
+    "originalImage": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1337010/ss_042f8b0fd51f97b7e09d0e9e658c22b3304b0a2a.1920x1080.jpg?t=1789140377",
+    "kind": "official_game_showcase",
+    "description": "Alba 海边官方展示画面"
+  }
+]
