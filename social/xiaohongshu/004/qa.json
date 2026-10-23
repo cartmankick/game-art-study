@@ -1,0 +1,51 @@
+{
+  "01.png": {
+    "sha256": "341f5a157f2d113d14176c0ce09a0ed835ff1f38c3e1db5cbbe7c6cf9ce90dcd",
+    "dimensions": [
+      1080,
+      1440
+    ]
+  },
+  "02.png": {
+    "sha256": "e7b9092ee7340bfaeed404b9c05e9140c7027861fec616afe4b30413fa0fc1e9",
+    "dimensions": [
+      1080,
+      1440
+    ]
+  },
+  "03.png": {
+    "sha256": "c212bd6c898d9d3baa37c0eaad4bcca75080e18f196c4c89952a4e70b34e3ddc",
+    "dimensions": [
+      1080,
+      1440
+    ]
+  },
+  "04.png": {
+    "sha256": "4a2d30499da90a36b75eb69baad4070ec9778ad2fc7e201003566a37aa00ca1e",
+    "dimensions": [
+      1080,
+      1440
+    ]
+  },
+  "05.png": {
+    "sha256": "c3538e3c78d6af2c60aaf5273db808eb67967cf1b4bffc23e216e56863631259",
+    "dimensions": [
+      1080,
+      1440
+    ]
+  },
+  "06.png": {
+    "sha256": "a4896e9c52c4ca8fb54e65bebfb78ad69a843a9fb550682a592cc93304badd88",
+    "dimensions": [
+      1080,
+      1440
+    ]
+  },
+  "07.png": {
+    "sha256": "dd81055386c81253ad7a5d387e9c36d2a4eaf767c3ddd64f0470799b21d45c00",
+    "dimensions": [
+      1080,
+      1440
+    ]
+  }
+}
