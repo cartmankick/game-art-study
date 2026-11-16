@@ -11,6 +11,28 @@ const works = [
     chrome: "#f6f6f2",
   },
   {
+    id: "warhol", title: "金宝汤罐头", artist: "安迪·沃霍尔", year: "1962",
+    alt: "美术馆展墙上，三十二幅红白色的金宝汤罐头画布排成四行八列。",
+    museum: "纽约现代艺术博物馆", source: "https://www.moma.org/collection/works/79809",
+    chrome: "#f7f2e9",
+    photograph: {
+      by: "Brandon Fick", source: "https://www.flickr.com/photos/ficken/2103465159/",
+      license: "CC BY 2.0", terms: "https://creativecommons.org/licenses/by/2.0/",
+    },
+  },
+  {
+    id: "shanshui", title: "山水图", artist: "王翚", year: "清代",
+    alt: "淡墨层峰之间，一线瀑布向溪谷垂落，山道穿过近处的松林与屋舍。",
+    museum: cleveland, source: "https://www.clevelandart.org/art/1915.105",
+    chrome: "#f0ece3",
+  },
+  {
+    id: "huaniao", title: "五色芍药图", artist: "恽寿平", year: "1685",
+    alt: "浅金色绢面上，粉白芍药从两侧舒展，右上留有题字与印章。",
+    museum: cleveland, source: "https://www.clevelandart.org/art/1967.192",
+    chrome: "#f7f0e6",
+  },
+  {
     id: "night", title: "荒野暮色", artist: "弗雷德里克·埃德温·丘奇", year: "1860",
     alt: "绯红的晚霞铺满湖上天空，前景的松树和山脊已经沉入暮色。",
     museum: cleveland, source: "https://www.clevelandart.org/art/1965.233",
@@ -63,7 +85,13 @@ function subscribe(callback: () => void) {
 function apply(theme: Skin) {
   active = theme;
   document.documentElement.dataset.skin = theme;
-  const color = works.find((work) => work.id === theme)?.chrome ?? "#ffffff";
+  const work = works.find((item) => item.id === theme);
+  if (work) {
+    document.documentElement.style.setProperty("--wallpaper", `url("${picture(work)}")`);
+  } else {
+    document.documentElement.style.removeProperty("--wallpaper");
+  }
+  const color = work?.chrome ?? "#ffffff";
   document.querySelector('meta[name="theme-color"]')?.setAttribute("content", color);
   subscribers.forEach((callback) => callback());
 }
@@ -85,13 +113,9 @@ export function Artwork() {
   if (!work) return null;
   return (
     <>
-      <button type="button" className="artPlate"
-        aria-label={`放大查看《${work.title}》`} onClick={() => setEnlarged(true)}>
-        <span className="artMat"><img src={picture(work)} alt={work.alt} /></span>
-        <span className="artCredit">
-          <span><strong>{work.title}</strong><small>{work.artist}</small></span>
-          <Maximize2 size={15} aria-hidden="true" />
-        </span>
+      <button type="button" className="artCredit"
+        aria-label={`查看完整原作《${work.title}》`} onClick={() => setEnlarged(true)}>
+        <Maximize2 size={15} aria-hidden="true" /><span>{work.title}</span>
       </button>
       {enlarged && (
         <Dialog title={work.title} close={() => setEnlarged(false)}>
@@ -102,6 +126,13 @@ export function Artwork() {
           <a className="collectionLink" href={work.source} target="_blank" rel="noreferrer">
             {work.museum}馆藏页 <ArrowUpRight size={15} aria-hidden="true" />
           </a>
+          {"photograph" in work && (
+            <p className="photoCredit">
+              展览现场摄影 <a href={work.photograph.source} target="_blank" rel="noreferrer">{work.photograph.by}</a>
+              {" · "}<a href={work.photograph.terms} target="_blank" rel="noreferrer">{work.photograph.license}</a>
+              <small>图像已转为 WebP，作为背景时随屏幕裁切。</small>
+            </p>
+          )}
         </Dialog>
       )}
     </>

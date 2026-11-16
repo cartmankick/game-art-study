@@ -79,7 +79,7 @@
 .ledgerRow b {
   color: var(--accent);
 }
-/* Surrounding surfaces use the painting's palette; the image retains its own colors. */
+/* Each skin pairs a genuine artwork with its interface palette. */
 :root {
   --art-mat: #eeece5;
   --paper: #ffffff;
@@ -114,6 +114,21 @@ html[data-skin="coast"] {
   --bg: #f5f5ee; --paper: #fdfbf3; --light: #eeeee4; --mint: #e0e8e6;
   --line: #ccd2cd; --ink: #273843; --muted: #55636a; --accent: #375974;
   --art-mat: #e5e4d8; --shape: 5px; --headline: Georgia, "Songti SC", serif;
+}
+html[data-skin="warhol"] {
+  --bg: #f7f2e9; --paper: #fffbf4; --light: #f0e8dc; --mint: #e6e3d8;
+  --line: #d4cabd; --ink: #2c2621; --muted: #5f574d; --accent: #413c34;
+  --focus: 50% 49%; --headline: var(--sans);
+}
+html[data-skin="shanshui"] {
+  --bg: #f0ece3; --paper: #faf8f1; --light: #edeae1; --mint: #dfe4dd;
+  --line: #c5c7bc; --ink: #292f2c; --muted: #555b52; --accent: #3c554e;
+  --focus: 50% 56%; --headline: Georgia, "Songti SC", "Noto Serif CJK SC", serif;
+}
+html[data-skin="huaniao"] {
+  --bg: #f7f0e6; --paper: #fbf7ef; --light: #f3ebe0; --mint: #eee0db;
+  --line: #d2c0b7; --ink: #392e2b; --muted: #65534f; --accent: #7b484c;
+  --focus: 52% 62%; --headline: Georgia, "Songti SC", "Noto Serif CJK SC", serif;
 }
 html[data-skin]:not([data-skin="classic"]) body {
   background: var(--bg);
@@ -207,86 +222,155 @@ html[data-skin]:not([data-skin="classic"])
 html[data-skin]:not([data-skin="classic"]) :is(h1, h2, .brand b, .entryBrand strong) {
   font-family: var(--headline);
 }
+/* A viewport layer keeps the painting behind every view as the page scrolls,
+   including the gap around the bottom dock. A fixed layer works on iOS without
+   relying on background-attachment: fixed. */
+html[data-skin]:not([data-skin="classic"]) {
+  --glass: rgba(251, 251, 247, .68);
+  --glass-dense: rgba(252, 252, 249, .72);
+  --glass-edge: rgba(255, 255, 255, .74);
+  --glass-glint: rgba(255, 255, 255, .75);
+  --glass-shade: rgba(22, 34, 30, .13);
+  --inside: rgba(255, 255, 255, .27);
+  --shape: 17px;
+  --frost: blur(11px) saturate(1.14);
+}
+html[data-skin][data-skin="night"] {
+  --glass: rgba(28, 30, 35, .79);
+  --glass-dense: rgba(33, 35, 41, .90);
+  --glass-edge: rgba(245, 234, 214, .32);
+  --glass-glint: rgba(255, 244, 224, .22);
+  --inside: rgba(255, 255, 255, .06);
+}
+html[data-skin]:not([data-skin="classic"]) #root { isolation: isolate; min-height: 100vh; }
+html[data-skin]:not([data-skin="classic"]) #root::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background-color: var(--bg);
+  background-image: var(--wallpaper);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: var(--focus, center);
+}
+html[data-skin="pond"] { --focus: 67% 56%; }
+html[data-skin="coast"] { --focus: 30% 57%; }
+html[data-skin="warm"] { --focus: 46% 44%; }
+html[data-skin="jazz"] { --focus: 55% 42%; }
+html[data-skin="abstract"] { --focus: 20% center; }
+html[data-skin]:not([data-skin="classic"]) :is(.routeSketch, .welcomeIcons) { display: none; }
 html[data-skin]:not([data-skin="classic"]) :is(.welcome, .dashHero) {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1.22fr);
-  gap: 16px;
-  align-items: center;
-  padding: 18px 22px;
-  background: var(--paper);
-  border-color: var(--line);
-  border-radius: var(--shape);
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 10px; min-height: clamp(128px, 20vh, 192px); padding: 0;
+  background: transparent; border: none; border-radius: 0; overflow: visible;
 }
-html[data-skin]:not([data-skin="classic"]) :is(.routeSketch, .welcomeIcons) {
-  display: none;
+html[data-skin]:not([data-skin="classic"]) :is(.welcome, .dashHero) > div:first-child {
+  min-width: 0; padding: 9px 16px 10px;
+  color: var(--ink); background: var(--glass);
+  border: 1px solid var(--glass-edge); border-radius: 17px;
+  -webkit-backdrop-filter: var(--frost); backdrop-filter: var(--frost);
+  box-shadow: inset 0 1px 0 var(--glass-glint), 0 4px 16px var(--glass-shade);
 }
-html[data-skin]:not([data-skin="classic"]) .welcome {
-  grid-template-columns: minmax(0, 1fr);
-  gap: 13px;
-  padding: 16px;
-}
-html[data-skin]:not([data-skin="classic"]) .welcome > div {
-  grid-row: 2;
-  padding: 0 1px 2px;
-}
-html[data-skin]:not([data-skin="classic"]) .welcome p {
-  margin-top: 2px;
-}
-html[data-skin="abstract"] :is(.week, .lane) { border-top: 3px solid var(--ink); }
-html[data-skin="jazz"] .sectionHead { border-bottom: 2px solid var(--ink); padding-bottom: 7px; }
-html[data-skin="night"] .taskBox { border-color: var(--muted); }
-html[data-skin="night"] .weekDay:not(.selected) small { color: var(--muted); }
-
-.artPlate { display: block; width: 100%; min-width: 0; padding: 0; text-align: start; }
-.artMat, .swatchMat {
-  display: grid; place-items: center; overflow: hidden; background: var(--art-mat);
-}
-.artMat { height: clamp(150px, 22vw, 212px); padding: 9px; }
-.artMat img, .swatchMat img {
-  display: block; width: 100%; height: 100%; min-height: 0; object-fit: contain;
+html[data-skin]:not([data-skin="classic"]) :is(.welcome, .dashHero) :is(p, small) {
+  color: var(--muted);
 }
 .artCredit {
-  display: flex; align-items: center; justify-content: space-between; gap: 8px;
-  padding: 7px 0 0; color: var(--muted);
+  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+  flex-shrink: 0; max-width: 47%; min-height: 44px; padding: 8px 12px;
+  border-radius: 24px; border: 1px solid rgba(255,255,255,.50);
+  background: rgba(24,31,33,.63); color: #fff; font-size: 12px; font-weight: 550;
+  -webkit-backdrop-filter: blur(9px); backdrop-filter: blur(9px);
 }
-.artCredit > span { display: flex; flex-wrap: wrap; align-items: baseline; gap: 1px 8px; }
-.artCredit strong { font-size: 12px; font-weight: 650; color: var(--ink); }
-.artCredit small { font: 400 11px/1.45 var(--sans); letter-spacing: 0; }
-.artCredit > svg { flex-shrink: 0; }
+html[data-skin]:not([data-skin="classic"]) :is(
+  .entryBrand, .entryCard, .top, .pocketNav, .week, .lane, .photoBlank,
+  .archive, .eventCard, .scoreGrid article, .shelfList, .ledgerRow,
+  .sectionHead h2, .ledgerHead, section > .empty:not(.lane > .empty),
+  .main section > p[role="status"], .photoTile, .shelfFilters button:not([aria-pressed="true"])
+) {
+  color: var(--ink); background: var(--glass);
+  border: 1px solid var(--glass-edge);
+  box-shadow: inset 0 1px 0 var(--glass-glint), 0 4px 18px var(--glass-shade);
+  -webkit-backdrop-filter: var(--frost); backdrop-filter: var(--frost);
+}
+html[data-skin]:not([data-skin="classic"]) .entryBrand {
+  padding: 7px 9px; border-radius: 24px;
+}
+html[data-skin]:not([data-skin="classic"]) .entryCard { margin-top: 20px; }
+html[data-skin]:not([data-skin="classic"]) .dialog { background: var(--paper); }
+html[data-skin]:not([data-skin="classic"]) :is(.entryTabs, .lane header, .weekDay:not(.selected)) {
+  background: var(--inside);
+}
+html[data-skin]:not([data-skin="classic"]) .entryTabs button.active {
+  background: var(--paper); border-color: var(--line);
+}
+html[data-skin]:not([data-skin="classic"]) .empty { color: var(--muted); }
+html[data-skin]:not([data-skin="classic"]) :is(.sectionHead h2, .ledgerHead) {
+  width: fit-content; border-radius: 14px; padding: 6px 10px;
+}
+html[data-skin]:not([data-skin="classic"]) :is(.shelfList, .ledgerRow, .photoTile, section > .empty:not(.lane > .empty), .main section > p[role="status"]) { border-radius: 14px; }
+html[data-skin]:not([data-skin="classic"]) .shelfList { padding: 0 12px; }
+html[data-skin]:not([data-skin="classic"]) .shelfList li:last-child { border-bottom: 0; }
+html[data-skin]:not([data-skin="classic"]) .ledgerRow { margin: 4px 0; padding-inline: 13px; }
+html[data-skin]:not([data-skin="classic"]) .main section > p[role="status"] { padding: 8px 12px; }
+html[data-skin]:not([data-skin="classic"]) .photoBlank span { color: var(--muted); }
+html[data-skin]:not([data-skin="classic"]) .themeOpen { border-radius: 24px; }
+html[data-skin]:not([data-skin="classic"]) .top { border-width: 0 0 1px; }
+html[data-skin="night"] .taskBox { border-color: var(--muted); }
+html[data-skin="night"] .weekDay:not(.selected) small { color: var(--muted); }
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  html[data-skin]:not([data-skin="classic"]) { --glass: var(--paper); }
+}
+@media (prefers-reduced-transparency: reduce) {
+  html[data-skin]:not([data-skin="classic"]) {
+    --glass: var(--paper); --glass-dense: var(--paper); --frost: none;
+  }
+}
 .skins { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
 .swatch {
   display: flex; flex-direction: column; min-width: 0; padding: 0;
   text-align: start; background: var(--paper); border: 1px solid var(--line); border-radius: 3px;
 }
 .swatch[aria-pressed="true"] { outline: 2px solid var(--accent); outline-offset: 1px; }
-.swatchMat { width: 100%; height: clamp(72px, 12dvh, 100px); padding: 6px; }
+.swatchMat { display: grid; place-items: center; overflow: hidden; width: 100%; height: clamp(72px, 12dvh, 100px); padding: 6px; }
+.swatchMat img { display: block; width: 100%; height: 100%; min-height: 0; object-fit: contain; }
 .swatchMat[data-work="pond"] { background: #e4e6dc; }
 .swatchMat[data-work="night"] { background: #282a2a; }
 .swatchMat[data-work="abstract"] { background: #e8e6e0; }
 .swatchMat[data-work="warm"] { background: #e8ddcf; }
 .swatchMat[data-work="jazz"] { background: #e3dccf; }
+.swatchMat[data-work="warhol"] { background: #e1d4bd; }
+.swatchMat[data-work="shanshui"] { background: #dad6ca; }
+.swatchMat[data-work="huaniao"] { background: #e6d9c6; }
 .swatchMat[data-work="coast"] { background: #e5e4d8; }
 .swatchInfo { position: relative; display: block; width: 100%; padding: 7px 8px 9px; }
 .swatchInfo strong, .swatchInfo small { display: block; }
 .swatchInfo strong { font-size: 13px; line-height: 1.45; padding-right: 15px; }
 .swatchInfo small { color: var(--muted); margin-top: 2px; font-size: 10.5px; line-height: 1.45; }
 .skinCheck { position: absolute; right: 6px; top: 9px; color: var(--accent); }
-.skinActions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+.skinActions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; position: sticky; bottom: -1px; z-index: 1; padding: 10px 0 2px; margin-top: 6px; background: var(--paper); }
 .artDetail { margin: 0; }
 .artDetail img { display: block; margin: auto; width: 100%; height: auto; max-height: 63dvh; object-fit: contain; }
 .artDetail figcaption { display: flex; flex-wrap: wrap; gap: 2px 10px; align-items: baseline; margin: 12px 0 3px; }
 .artDetail figcaption span, .collectionLink { color: var(--muted); font-size: 13px; }
 .collectionLink { display: inline-flex; align-items: center; gap: 4px; padding: 8px 0; text-underline-offset: 3px; }
+.photoCredit { margin-top: 6px; color: var(--muted); font-size: 12px; }
+.photoCredit small { display: block; margin-top: 2px; }
+.photoCredit a { color: inherit; text-underline-offset: 2px; }
 @media (min-width: 650px) {
   .dialog:has(.artDetail) { width: min(760px, 90vw); }
 }
-@media (max-width: 550px) {
-  html[data-skin]:not([data-skin="classic"]) .dashHero { gap: 12px; padding: 12px; }
-  .dashHero .artMat { height: clamp(90px, 26vw, 135px); padding: 4px; }
-  .dashHero .artCredit { align-items: flex-start; }
-  .dashHero .artCredit > span { display: block; }
-  .dashHero .artCredit small { display: block; }
-  .welcome .artMat { height: clamp(128px, 40vw, 180px); padding: 6px; }
+@media (max-width: 650px) {
+  html[data-skin]:not([data-skin="classic"]) .entryPage { padding-top: max(13px, env(safe-area-inset-top)); }
+  html[data-skin]:not([data-skin="classic"]) :is(.welcome, .dashHero) { min-height: clamp(122px, 18svh, 162px); }
+  html[data-skin]:not([data-skin="classic"]) .pocketNav {
+    inset: auto max(11px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(11px, env(safe-area-inset-left));
+    padding: 4px 6px; border-radius: 32px; background: var(--glass-dense);
+    box-shadow: inset 0 1px 0 var(--glass-glint), 0 4px 18px rgba(20,26,25,.22);
+  }
+  html[data-skin]:not([data-skin="classic"]) .pocketNav button { border-radius: 25px; }
+  html[data-skin]:not([data-skin="classic"]) .pocketNav .active { background: var(--accent); color: var(--on, white); }
   .skins { gap: 9px; }
 }
 @media (max-width: 550px) {
