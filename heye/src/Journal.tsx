@@ -49,7 +49,9 @@ const stamp = (s: string) =>
 export default function Journal({ initialDay }: { initialDay: string }) {
   const [signed, setSigned] = useState(hasSession);
   const [openInvite, setOpenInvite] = useState(
-    () => location.hash === "#invite",
+    () =>
+      location.hash === "#invite" ||
+      new URLSearchParams(location.search).get("view") === "invite",
   );
   const onExit = useCallback(() => {
     setOpenInvite(false);

@@ -82,7 +82,7 @@ export default function Entry({ onEnter }: { onEnter: () => void }) {
   }
   useEffect(() => {
     void checkStage();
-    if (location.hash)
+    if (new URLSearchParams(location.hash.slice(1)).has("join"))
       history.replaceState(
         history.state,
         "",
