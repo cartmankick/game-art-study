@@ -1,4 +1,4 @@
-import { Artwork, Theme } from "./Theme";
+import { SkinDate, Theme } from "./Theme";
 import { Calendar, Points, firstPointsDay } from "./Calendar";
 import { CalendarClock, Coins } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -306,7 +306,7 @@ function Dashboard({
       <main className="main">
         <section className="dashHero">
           <div>
-            <small>{dateLabel(day, true)}</small>
+            <small className="classicDate">{dateLabel(day, true)}</small>
             <h1>
               {view === "events"
                 ? "事件倒计时"
@@ -325,7 +325,7 @@ function Dashboard({
             </p>
           </div>
           <RouteSketch />
-          <Artwork />
+          <SkinDate day={day} />
         </section>
         {error && (
           <p className="error" role="alert">

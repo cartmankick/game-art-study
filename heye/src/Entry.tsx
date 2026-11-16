@@ -1,4 +1,5 @@
-import { Artwork, Theme } from "./Theme";
+import { SkinDate, Theme } from "./Theme";
+import { todayCN } from "./types";
 import { useEffect, useRef, useState } from "react";
 import {
   ArrowUpRight,
@@ -137,7 +138,7 @@ export default function Entry({ onEnter }: { onEnter: () => void }) {
           <p>互发任务，分享每天的照片。</p>
         </div>
         <RouteSketch />
-        <Artwork />
+        <SkinDate day={todayCN()} />
       </section>
       {invite ? (
         <section className="entryCard">
