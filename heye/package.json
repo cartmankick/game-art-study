@@ -1,0 +1,8 @@
+{
+  "name":"heye-couple-journal",
+  "private":true,
+  "type":"module",
+  "scripts":{"build":"esbuild src/main.tsx --bundle --minify --target=safari15.4,chrome100 --jsx=automatic --outfile=app.js"},
+  "dependencies":{"react":"19.2.6","react-dom":"19.2.6","lucide-react":"1.31.0"},
+  "devDependencies":{"esbuild":"0.28.0"}
+}
