@@ -8,7 +8,7 @@ import {
   Image as ImageIcon,
   ListChecks,
 } from "lucide-react";
-import { authenticate, request, saved } from "./client";
+import { authenticate, invitationLink, request, saved } from "./client";
 export function Mark() {
   return (
     <span className="brandMark">
@@ -109,12 +109,7 @@ export default function Entry({ onEnter }: { onEnter: () => void }) {
         invitation,
         proof: String(form.get("proof") || ""),
       });
-      if (mode === "owner")
-        setInvite(
-          new URL("./", location.href).href +
-            "#join=" +
-            encodeURIComponent(invitation),
-        );
+      if (mode === "owner") setInvite(invitationLink(invitation));
       else onEnter();
     } catch (e) {
       setError(e instanceof Error ? e.message : "连接失败，请重试。");
@@ -147,9 +142,7 @@ export default function Entry({ onEnter }: { onEnter: () => void }) {
             <Check />
           </div>
           <h2>两人空间已创建</h2>
-          <p>
-            把邀请链接私发给对方。对方打开后，可以填写名字并设置自己的注册码。
-          </p>
+          <p>把邀请链接私发给对方。以后可以在「我们俩」里查看邀请码。</p>
           <label>
             邀请链接
             <input readOnly value={invite} onFocus={(e) => e.target.select()} />

@@ -14,10 +14,12 @@ import {
   Plus,
   RotateCcw,
   Send,
+  Ticket,
   UsersRound,
 } from "lucide-react";
 import Entry, { Mark, RouteSketch } from "./Entry";
 import Photos from "./Photos";
+import Invitation from "./Invitation";
 import { ApiError, hasSession, leave, request } from "./client";
 import { Dialog, TaskLine, WeekStrip } from "./parts";
 import { dateLabel, emptyBoard, statusLabel, todayCN } from "./types";
@@ -25,6 +27,7 @@ import type { Board, Task } from "./types";
 type FormAction = "submit" | "approve" | "return";
 type Modal =
   | { type: "space" }
+  | { type: "invitation" }
   | { type: "create" }
   | { type: "detail"; id: string }
   | { type: FormAction; task: Task };
@@ -45,14 +48,29 @@ const stamp = (s: string) =>
   }).format(new Date(s));
 export default function Journal({ initialDay }: { initialDay: string }) {
   const [signed, setSigned] = useState(hasSession);
+  const [openInvite, setOpenInvite] = useState(
+    () => location.hash === "#invite",
+  );
+  const onExit = useCallback(() => {
+    setOpenInvite(false);
+    setSigned(false);
+  }, []);
   if (!signed) return <Entry onEnter={() => setSigned(true)} />;
-  return <Dashboard initialDay={initialDay} onExit={() => setSigned(false)} />;
+  return (
+    <Dashboard
+      initialDay={initialDay}
+      openInvite={openInvite}
+      onExit={onExit}
+    />
+  );
 }
 function Dashboard({
   initialDay,
+  openInvite,
   onExit,
 }: {
   initialDay: string;
+  openInvite: boolean;
   onExit: () => void;
 }) {
   const [day, setDay] = useState(initialDay),
@@ -60,7 +78,9 @@ function Dashboard({
     [view, setView] = useState<"day" | "history">("day"),
     [filter, setFilter] = useState("all");
   const [board, setBoard] = useState<Board>(emptyBoard),
-    [modal, setModal] = useState<Modal | null>(null),
+    [modal, setModal] = useState<Modal | null>(
+      openInvite ? { type: "invitation" } : null,
+    ),
     [error, setError] = useState(""),
     [formError, setFormError] = useState(""),
     [busy, setBusy] = useState(false),
@@ -434,6 +454,9 @@ function Dashboard({
           {toast}
         </div>
       )}
+      {modal?.type === "invitation" && (
+        <Invitation close={close} onExit={onExit} />
+      )}
       {modal?.type === "space" && (
         <Dialog title="我们俩" close={close}>
           <div className="people">
@@ -453,9 +476,15 @@ function Dashboard({
               </div>
             ))}
           </div>
-          <p className="muted">
-            对方首次加入时，在登录页填写名字、你的邀请码和自己的注册码。
-          </p>
+          {board.seat === 1 && (
+            <button
+              className="primary wide"
+              onClick={() => show({ type: "invitation" })}
+            >
+              <Ticket size={17} />
+              查看邀请码
+            </button>
+          )}
           <button
             className="secondary wide"
             disabled={busy}

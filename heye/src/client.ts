@@ -49,6 +49,11 @@ export async function request(payload: Record<string, unknown>) {
   });
   return unpack(r);
 }
+export function invitationLink(code: string) {
+  const url = new URL("./", location.href);
+  url.hash = "join=" + encodeURIComponent(code);
+  return url.href;
+}
 export async function authenticate(p: Record<string, string>) {
   const result = await request(p);
   if (!result.session) throw new Error("登录未完成，请重试。");

@@ -917,3 +917,39 @@ small {
     font-size: 13px;
   }
 }
+
+.invitePanel {
+  display: grid;
+  gap: 12px;
+}
+.invitePanel .wide {
+  margin-top: 0;
+}
+.inviteValue {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  border-radius: 12px;
+  color: var(--accent);
+  background: var(--mint);
+}
+.inviteValue svg {
+  flex-shrink: 0;
+}
+.inviteValue output {
+  font:
+    650 18px/1.5 ui-monospace,
+    monospace;
+  overflow-wrap: anywhere;
+  user-select: all;
+}
+.inviteButtons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.inviteButtons button {
+  flex: 1 1 auto;
+  min-height: 44px;
+}
