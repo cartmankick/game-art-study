@@ -17,24 +17,26 @@ export type Task = {
   created: string;
   events: Event[];
 };
-export type Note = {
-  day: string;
+export type Photo = {
+  id: string;
   author: number;
-  body: string;
-  updated: string;
+  day: string;
+  created: string;
+  url: string;
+  object_path: string;
 };
 export type Member = { slot: number; name: string };
 export type Board = {
   seat: number;
   members: Member[];
   tasks: Task[];
-  notes: Note[];
+  photos: Photo[];
   activeDays: string[];
   history: {
     day: string;
     total: number;
     done: number;
-    notes: number;
+    photos: number;
     waiting: number;
   }[];
   more: boolean;
@@ -43,7 +45,7 @@ export const emptyBoard: Board = {
   seat: 0,
   members: [],
   tasks: [],
-  notes: [],
+  photos: [],
   activeDays: [],
   history: [],
   more: false,
