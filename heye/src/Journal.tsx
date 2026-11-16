@@ -3,6 +3,7 @@ import {
   ArrowDownLeft,
   ArrowUpRight,
   CalendarDays,
+  BookOpen,
   Check,
   CheckCheck,
   ChevronRight,
@@ -19,6 +20,7 @@ import {
 } from "lucide-react";
 import Entry, { Mark, RouteSketch } from "./Entry";
 import Photos from "./Photos";
+import { Shelf, Finished } from "./Shelf";
 import Invitation from "./Invitation";
 import { ApiError, hasSession, leave, request } from "./client";
 import { Dialog, TaskLine, WeekStrip } from "./parts";
@@ -77,7 +79,7 @@ function Dashboard({
 }) {
   const [day, setDay] = useState(initialDay),
     [today, setToday] = useState(initialDay),
-    [view, setView] = useState<"day" | "history">("day"),
+    [view, setView] = useState<"day" | "history" | "finished" | "shelf">("day"),
     [filter, setFilter] = useState("all");
   const [board, setBoard] = useState<Board>(emptyBoard),
     [modal, setModal] = useState<Modal | null>(
@@ -147,7 +149,7 @@ function Dashboard({
       setToday(todayCN());
       if (
         document.visibilityState === "visible" &&
-        view === "day" &&
+        view !== "history" &&
         !locked.current
       )
         void refresh(undefined, true);
@@ -192,13 +194,16 @@ function Dashboard({
       if (modal.type === "create") {
         await request({
           action: "create",
+          target: f.target,
           day: f.day,
           title: f.title,
           detail: f.detail,
           id: newId.current,
         });
         choose(String(f.day));
-        setToast("任务已发给" + partner);
+        setToast(
+          f.target === "self" ? "已加入我的个人任务" : "任务已发给" + partner,
+        );
       } else if ("task" in modal) {
         await request({
           action: modal.type,
@@ -228,7 +233,7 @@ function Dashboard({
       ? board.tasks.find((t) => t.id === modal.id)
       : null;
   function navHistory() {
-    setView("history");
+    setView("finished");
   }
   return (
     <div className="app">
@@ -247,7 +252,16 @@ function Dashboard({
               任务
             </button>
             <button
-              className={view === "history" ? "active" : ""}
+              className={view === "shelf" ? "active" : ""}
+              onClick={() => setView("shelf")}
+            >
+              <BookOpen size={17} />
+              清单
+            </button>
+            <button
+              className={
+                view === "history" || view === "finished" ? "active" : ""
+              }
               onClick={navHistory}
             >
               <History size={17} />
@@ -265,11 +279,13 @@ function Dashboard({
           <div>
             <small>{dateLabel(day, true)}</small>
             <h1>
-              {view === "history"
-                ? "历史记录"
-                : day === today
-                  ? "今天的任务"
-                  : "当天的任务"}
+              {view === "shelf"
+                ? "书影音清单"
+                : view === "history" || view === "finished"
+                  ? "历史记录"
+                  : day === today
+                    ? "今天的任务"
+                    : "当天的任务"}
             </h1>
             <p>
               {board.seat ? name(board.seat) + " 与 " + partner : "双人空间"}
@@ -282,7 +298,32 @@ function Dashboard({
             {error} <button onClick={() => void refresh()}>重新同步</button>
           </p>
         )}
-        {view === "day" ? (
+        {(view === "history" || view === "finished") && (
+          <nav className="shelfFilters" aria-label="历史视图">
+            <button
+              aria-pressed={view === "finished"}
+              onClick={() => setView("finished")}
+            >
+              完成记录
+            </button>
+            <button
+              aria-pressed={view === "history"}
+              onClick={() => setView("history")}
+            >
+              按日查看
+            </button>
+          </nav>
+        )}
+        {view === "shelf" ? (
+          <Shelf
+            board={board}
+            loading={loading}
+            name={name}
+            refresh={() => latestRefresh.current(undefined, true)}
+          />
+        ) : view === "finished" ? (
+          <Finished board={board} loading={loading} name={name} />
+        ) : view === "day" ? (
           <>
             <WeekStrip
               day={day}
@@ -295,7 +336,7 @@ function Dashboard({
                 双人任务{" "}
                 <small>
                   {board.tasks.filter((t) => t.status === "done").length}/
-                  {board.tasks.length} 已确认
+                  {board.tasks.length} 已完成
                 </small>
               </h2>
               <button
@@ -307,24 +348,54 @@ function Dashboard({
               </button>
             </div>
             <div className="lanes">
-              {[false, true].map((sent) => {
-                const items = board.tasks.filter((t) =>
-                  sent ? t.author === board.seat : t.author !== board.seat,
-                );
+              {[
+                {
+                  key: "received",
+                  title: partner + "发给我的",
+                  items: board.tasks.filter(
+                    (t) => !t.self_task && t.author !== board.seat,
+                  ),
+                  empty: "还没有收到任务",
+                },
+                {
+                  key: "sent",
+                  title: "我发给" + partner + "的",
+                  items: board.tasks.filter(
+                    (t) => !t.self_task && t.author === board.seat,
+                  ),
+                  empty: "还没有发出的任务",
+                },
+                {
+                  key: "self",
+                  title: "我的个人任务",
+                  items: board.tasks.filter(
+                    (t) => t.self_task && t.author === board.seat,
+                  ),
+                  empty: "还没有给自己的任务",
+                },
+                {
+                  key: "partner",
+                  title: partner + "的个人任务",
+                  items: board.tasks.filter(
+                    (t) => t.self_task && t.author !== board.seat,
+                  ),
+                  empty: "",
+                },
+              ].map(({ key, title, items, empty }) => {
+                if (key === "partner" && !items.length) return null;
                 return (
-                  <section
-                    key={String(sent)}
-                    className={"lane " + (sent ? "sent" : "received")}
-                  >
+                  <section key={key} className={"lane " + key}>
                     <header>
                       <span className="laneIcon">
-                        {sent ? <ArrowUpRight /> : <ArrowDownLeft />}
+                        {key === "sent" ? (
+                          <ArrowUpRight />
+                        ) : key === "received" ? (
+                          <ArrowDownLeft />
+                        ) : (
+                          <ListChecks />
+                        )}
                       </span>
-                      <h3>
-                        {sent
-                          ? "我发给" + partner + "的"
-                          : partner + "发给我的"}
-                      </h3>
+                      <h3>{title}</h3>
                       <span className="pill">{items.length}</span>
                     </header>
                     {items.length ? (
@@ -339,13 +410,7 @@ function Dashboard({
                       </div>
                     ) : (
                       <div className="empty">
-                        <span>
-                          {loading
-                            ? "正在同步…"
-                            : sent
-                              ? "还没有发出的任务"
-                              : "还没有收到任务"}
-                        </span>
+                        <span>{loading ? "正在同步…" : empty}</span>
                       </div>
                     )}
                   </section>
@@ -401,7 +466,7 @@ function Dashboard({
                   <span>
                     <strong>{h.day}</strong>
                     <small>
-                      {h.total} 项任务 · {h.done} 项已确认 · {h.photos} 张照片
+                      {h.total} 项任务 · {h.done} 项已完成 · {h.photos} 张照片
                     </small>
                   </span>
                   {h.waiting > 0 && <i className="status review">待我确认</i>}
@@ -443,7 +508,14 @@ function Dashboard({
           发任务
         </button>
         <button
-          className={view === "history" ? "active" : ""}
+          className={view === "shelf" ? "active" : ""}
+          onClick={() => setView("shelf")}
+        >
+          <BookOpen />
+          清单
+        </button>
+        <button
+          className={view === "history" || view === "finished" ? "active" : ""}
           onClick={navHistory}
         >
           <History />
@@ -524,7 +596,13 @@ function Dashboard({
           <form onSubmit={save}>
             {modal.type === "create" ? (
               <>
-                <p className="muted">发给 {partner}</p>
+                <label>
+                  任务给谁
+                  <select name="target" defaultValue="partner">
+                    <option value="partner">给对方 · {partner}</option>
+                    <option value="self">给自己</option>
+                  </select>
+                </label>
                 <label>
                   任务内容
                   <input
@@ -594,7 +672,9 @@ function Dashboard({
         <Dialog title="任务详情" close={close}>
           <div className="detailHead">
             <span className={"status " + detail.status}>
-              {statusLabel[detail.status]}
+              {detail.self_task && detail.status === "done"
+                ? "已完成"
+                : statusLabel[detail.status]}
             </span>
             <small>
               {detail.day} · {name(detail.author)}发布
@@ -616,15 +696,60 @@ function Dashboard({
             ].map((e) => (
               <li key={e.id}>
                 <b>
-                  {name(e.actor)} · {eventNames[e.kind]}
+                  {name(e.actor)} ·{" "}
+                  {detail.self_task && e.kind === "done"
+                    ? "标记完成"
+                    : eventNames[e.kind]}
                 </b>
                 <small>{stamp(e.created)}</small>
                 {e.note && <p>{e.note}</p>}
               </li>
             ))}
           </ol>
+          {formError && (
+            <p className="error" role="alert">
+              {formError}
+            </p>
+          )}
           <div className="actions">
-            {detail.author !== board.seat &&
+            {detail.self_task &&
+              detail.author === board.seat &&
+              detail.status === "todo" && (
+                <button
+                  className="primary"
+                  disabled={busy}
+                  onClick={async () => {
+                    if (locked.current) return;
+                    locked.current = true;
+                    setBusy(true);
+                    setFormError("");
+                    try {
+                      await request({
+                        action: "submit",
+                        id: detail.id,
+                        revision: detail.revision,
+                      });
+                      setModal(null);
+                      setToast("个人任务已完成");
+                      await latestRefresh.current(undefined, true);
+                    } catch (e) {
+                      setFormError(
+                        e instanceof Error
+                          ? e.message
+                          : "暂时无法完成任务，请重试。",
+                      );
+                    } finally {
+                      locked.current = false;
+                      setBusy(false);
+                    }
+                  }}
+                >
+                  <Check size={16} />
+                  标记完成
+                </button>
+              )}
+            {!detail.self_task &&
+              detail.author !== board.seat &&
               ["todo", "returned"].includes(detail.status) && (
                 <button
                   className="primary"

@@ -7,6 +7,7 @@ export type Event = {
   created: string;
 };
 export type Task = {
+  self_task?: boolean;
   id: string;
   day: string;
   author: number;
@@ -27,6 +28,8 @@ export type Photo = {
 };
 export type Member = { slot: number; name: string };
 export type Board = {
+  shelf?: ShelfItem[];
+  finished?: Completion[];
   seat: number;
   members: Member[];
   tasks: Task[];
@@ -90,3 +93,19 @@ export function dateLabel(day: string, weekday = false) {
     ...(weekday ? { weekday: "long" as const } : {}),
   }).format(new Date(day + "T12:00:00Z"));
 }
+
+export type MediaKind = "book" | "music" | "film" | "other";
+export type ShelfItem = {
+  id: string;
+  kind: MediaKind;
+  title: string;
+  author: number;
+  people: number[];
+};
+export type Completion = {
+  id: string;
+  kind: MediaKind | "task";
+  title: string;
+  person: number;
+  finished: string;
+};

@@ -73,7 +73,9 @@ export function TaskLine({ task, open }: { task: Task; open: () => void }) {
         {task.detail && <small>{task.detail}</small>}
       </span>
       <span className={"status " + task.status}>
-        {statusLabel[task.status]}
+        {task.self_task && task.status === "done"
+          ? "已完成"
+          : statusLabel[task.status]}
       </span>
       <ChevronRight size={15} />
     </button>
