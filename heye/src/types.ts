@@ -117,6 +117,8 @@ export type ShelfItem = {
   id: string;
   kind: MediaKind;
   title: string;
+  music_url?: string | null;
+  artist?: string | null;
   author: number;
   people: number[];
 };
@@ -124,6 +126,8 @@ export type Completion = {
   id: string;
   kind: MediaKind | "task" | "event";
   title: string;
+  music_url?: string | null;
+  artist?: string | null;
   person: number;
   finished: string;
 };

@@ -7,6 +7,8 @@ import {
   Check,
   Plus,
 } from "lucide-react";
+import { MusicCard } from "./MusicCard";
+import { parseMusicShare, musicRows, savedMusic } from "./musicShare";
 import { request } from "./client";
 import { Dialog } from "./parts";
 import type { Board, MediaKind, Completion } from "./types";
@@ -33,6 +35,7 @@ export function Shelf({
     [form, setForm] = useState(false);
   const [addKind, setAddKind] = useState<MediaKind>("book"),
     [titles, setTitles] = useState(""),
+    [customTitle, setCustomTitle] = useState<string | null>(null),
     [error, setError] = useState(""),
     [busy, setBusy] = useState(false);
   const lock = useRef(false),
@@ -59,28 +62,26 @@ export function Shelf({
       setBusy(false);
     }
   }
+  const rows = addKind === "music" ? musicRows(titles) : titles.split(/\r?\n/).map(t => t.trim()).filter(Boolean);
+  const preview = addKind === "music" && rows.length === 1 ? parseMusicShare(rows[0]) : null;
   function add(e: React.FormEvent) {
     e.preventDefault();
-    const rows = [
-      ...new Set(
-        titles
-          .split(/\r?\n/)
-          .map((t) => t.trim())
-          .filter(Boolean),
-      ),
-    ];
-    if (
-      !rows.length ||
-      rows.length > 30 ||
-      rows.some((t) => Array.from(t).length > 150)
-    ) {
-      setError("每行写一个名称，每次 1–30 项，每项最多 150 字。");
-      return;
+    const unique = new Map<string, {title: string; music_url?: string; artist?: string | null}>();
+    for (const row of rows) {
+      const share = addKind === "music" ? parseMusicShare(row) : null;
+      if (addKind === "music" && !share && /https?:\/\//i.test(row)) {
+        setError("请粘贴网易云音乐的分享链接，或只填写作品名称。"); return;
+      }
+      const item = share ? { ...share, title: (preview && customTitle?.trim()) || share.title } : { title: row };
+      unique.set(share?.music_url || item.title, item);
     }
-    const items = rows.map((title) => {
-      const key = addKind + ":" + title;
+    if (!unique.size || unique.size > 30 || [...unique.values()].some(i => Array.from(i.title).length > 150 || (i.artist && Array.from(i.artist).length > 150))) {
+      setError("每次可添加 1–30 项，名称和歌手各最多 150 字。"); return;
+    }
+    const items = [...unique.values()].map((item) => {
+      const key = JSON.stringify([addKind, item]);
       if (!ids.current.has(key)) ids.current.set(key, crypto.randomUUID());
-      return { id: ids.current.get(key), title };
+      return { ...item, id: ids.current.get(key) };
     });
     void mutate({ action: "shelf-add", kind: addKind, items }, true);
   }
@@ -92,6 +93,7 @@ export function Shelf({
           className="primary"
           onClick={() => {
             setTitles("");
+            setCustomTitle(null);
             setAddKind(kind === "all" ? "book" : kind);
             setError("");
             ids.current.clear();
@@ -99,7 +101,7 @@ export function Shelf({
           }}
         >
           <Plus size={16} />
-          添加作品
+          {kind === "music" ? "分享音乐" : "添加作品"}
         </button>
       </div>
       <div className="shelfFilters" aria-label="作品分类">
@@ -124,8 +126,10 @@ export function Shelf({
             const Icon = media[i.kind].icon;
             const mine = i.people.includes(board.seat);
             const partner = 3 - board.seat;
+            const share = savedMusic(i);
             return (
-              <li key={i.id}>
+              <li key={i.id} className={share ? "musicItem" : undefined}>
+                {share ? <MusicCard share={share} /> : <>
                 <span className="shelfIcon">
                   <Icon size={19} />
                 </span>
@@ -137,12 +141,14 @@ export function Shelf({
                     {verb(i.kind)}
                   </small>
                 </div>
+                </>}
+                {share && <small className="musicStatus">{name(i.author)}分享 · {name(partner)}{i.people.includes(partner) ? "已" : "未"}听完</small>}
                 <label className="workCheck">
                   <input
                     type="checkbox"
                     checked={mine}
                     disabled={busy || !board.seat}
-                    aria-label={i.title + "，我已" + verb(i.kind)}
+                    aria-label={(share?.title || i.title) + "，我已" + verb(i.kind)}
                     onChange={(e) =>
                       void mutate({
                         action: "shelf-check",
@@ -173,7 +179,7 @@ export function Shelf({
               分类
               <select
                 value={addKind}
-                onChange={(e) => setAddKind(e.target.value as MediaKind)}
+                onChange={(e) => { setAddKind(e.target.value as MediaKind); setCustomTitle(null); }}
               >
                 {kinds.map((k) => (
                   <option key={k} value={k}>
@@ -183,15 +189,20 @@ export function Shelf({
               </select>
             </label>
             <label>
-              作品名称
+              {addKind === "music" ? "歌曲名称或网易云分享" : "作品名称"}
               <textarea
                 required
                 rows={5}
                 value={titles}
-                onChange={(e) => setTitles(e.target.value)}
-                placeholder="每行一个名称，可以整份粘贴"
+                onPaste={(e) => { if (!titles.trim() && parseMusicShare(e.clipboardData.getData("text"))) setAddKind("music"); }}
+                onChange={(e) => { setTitles(e.target.value); setCustomTitle(null); }}
+                placeholder={addKind === "music" ? "粘贴网易云链接或整段分享文字，每行一首" : "每行一个名称，可以整份粘贴"}
               />
             </label>
+            {preview && <>
+              <label>卡片标题<input value={customTitle ?? preview.title} onChange={e => setCustomTitle(e.target.value)} maxLength={150} /></label>
+              <div className="musicPreview"><MusicCard share={{...preview, title: customTitle?.trim() || preview.title}} /></div>
+            </>}
             <p className="muted">两个人都能看到，各自勾选完成。</p>
             {error && (
               <p className="error" role="alert">
@@ -258,6 +269,7 @@ export function Finished({
       {rows.length ? (
         <ul className="shelfList">
           {rows.map((x, i) => {
+            const share = savedMusic(x);
             const day = date.format(new Date(x.finished));
             return (
               <li className="completion" key={x.kind + x.id + x.person}>
@@ -272,7 +284,7 @@ export function Finished({
                       {x.person === 0 ? "两人" : name(x.person)} · 已
                       {verb(x.kind)} · {label(x.kind)}
                     </small>
-                    <strong>{x.title}</strong>
+                    {share ? <MusicCard share={share} /> : <strong>{x.title}</strong>}
                   </div>
                 </div>
               </li>
