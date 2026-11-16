@@ -1,4 +1,4 @@
-import { Theme } from "./Theme";
+import { Artwork, Theme } from "./Theme";
 import { Calendar, Points, firstPointsDay } from "./Calendar";
 import { CalendarClock, Coins } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -325,6 +325,7 @@ function Dashboard({
             </p>
           </div>
           <RouteSketch />
+          <Artwork />
         </section>
         {error && (
           <p className="error" role="alert">

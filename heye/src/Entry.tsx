@@ -1,4 +1,4 @@
-import { Theme } from "./Theme";
+import { Artwork, Theme } from "./Theme";
 import { useEffect, useRef, useState } from "react";
 import {
   ArrowUpRight,
@@ -137,6 +137,7 @@ export default function Entry({ onEnter }: { onEnter: () => void }) {
           <p>互发任务，分享每天的照片。</p>
         </div>
         <RouteSketch />
+        <Artwork />
       </section>
       {invite ? (
         <section className="entryCard">

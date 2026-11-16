@@ -1,49 +1,3 @@
-/* Cover artwork also serves as the visual key in the skin picker. */
-:root {
-  --pond-art: url("./pond.webp") center 46% / cover;
-  --night-art:
-    radial-gradient(circle at 75% 31%, #f4e5b8 0 5%, transparent 5.4%),
-    radial-gradient(ellipse at 84% 140%, #617498 0 38%, transparent 38.6%),
-    radial-gradient(ellipse at 28% 135%, #334362 0 42%, transparent 43%),
-    radial-gradient(circle at 21% 18%, #cad3eb 0 1px, transparent 2px) 0 0/47px
-      37px,
-    #141b33;
-  --abstract-art:
-    radial-gradient(circle at 78% 40%, #ffcf40 0 15%, transparent 15.6%),
-    linear-gradient(88deg, transparent 58%, #171820 58% 60%, transparent 60%),
-    linear-gradient(
-      143deg,
-      #f7ecd1 0 28%,
-      #1e62a0 28% 50%,
-      #e66640 50% 74%,
-      #f4ba3b 74%
-    );
-  --warm-art:
-    radial-gradient(ellipse at 66% 95%, #e3ac88 0 20%, transparent 21%),
-    radial-gradient(ellipse at 91% 58%, #db967a 0 24%, transparent 25%),
-    repeating-linear-gradient(90deg, #fae7ce 0 10px, #f6dfc3 10px 12px);
-  --jazz-art:
-    radial-gradient(
-      circle at 78% 54%,
-      #f4c34c 0 3%,
-      #20284a 3.5% 8%,
-      transparent 8.5%
-    ),
-    repeating-radial-gradient(
-        circle at 78% 54%,
-        #16203f 0 3%,
-        #364771 3.1% 3.7%,
-        #1e2c51 3.8% 5%,
-        transparent 5.1% 8%
-      )
-      100% 50% / 58% 150% no-repeat,
-    linear-gradient(112deg, #314fb2 0 64%, #92b6e5 64%);
-  --coast-art:
-    radial-gradient(circle at 79% 25%, #f6bc64 0 7%, transparent 7.5%),
-    radial-gradient(ellipse at 10% 132%, #29696f 0 38%, transparent 38.5%),
-    radial-gradient(ellipse at 67% 131%, #8ebdb0 0 58%, transparent 58.5%),
-    linear-gradient(#b5d9da 0 55%, #f6e5bb 55%);
-}
 .topActions,
 .countLabel,
 .eventPeople {
@@ -53,52 +7,6 @@
 }
 .entryBrand > .themeOpen {
   margin-left: auto;
-}
-.skins {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-}
-.swatch {
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  padding: 0;
-  overflow: hidden;
-  text-align: left;
-  color: var(--ink);
-}
-.swatch > span {
-  display: block;
-  height: 57px;
-}
-.swatch b {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 7px 10px;
-  font-size: 13px;
-}
-.swatch[aria-pressed="true"] {
-  outline: 2px solid var(--accent);
-  outline-offset: 1px;
-}
-[data-swatch="pond"] {
-  background: var(--pond-art);
-}
-[data-swatch="night"] {
-  background: var(--night-art);
-}
-[data-swatch="abstract"] {
-  background: var(--abstract-art);
-}
-[data-swatch="warm"] {
-  background: var(--warm-art);
-}
-[data-swatch="jazz"] {
-  background: var(--jazz-art);
-}
-[data-swatch="coast"] {
-  background: var(--coast-art);
 }
 .eventCard,
 .scoreGrid article {
@@ -171,85 +79,41 @@
 .ledgerRow b {
   color: var(--accent);
 }
+/* Surrounding surfaces use the painting's palette; the image retains its own colors. */
+:root {
+  --art-mat: #eeece5;
+  --paper: #ffffff;
+}
 html[data-skin="pond"] {
-  --bg: #f3f5ef;
-  --paper: #fbfcf7;
-  --light: #edf1e8;
-  --mint: #dfe9dc;
-  --line: #cad8ca;
-  --ink: #293630;
-  --accent: #486750;
-  --muted: #56685f;
-  --cover: var(--pond-art);
-  --shape: 19px 8px 19px 8px;
-  --headline: Georgia, "Songti SC", serif;
+  --bg: #f6f6f2; --paper: #fdfcf9; --light: #efefea; --mint: #e1e8df;
+  --line: #d9dcd2; --ink: #2a332e; --muted: #586259; --accent: #4c665a;
+  --art-mat: #e4e6dc; --shape: 10px; --headline: Georgia, "Songti SC", "Noto Serif CJK SC", serif;
 }
 html[data-skin="night"] {
   color-scheme: dark;
-  --bg: #101622;
-  --paper: #1b2333;
-  --light: #242e42;
-  --mint: #2c3951;
-  --line: #3b4961;
-  --ink: #e8efff;
-  --accent: #a9c5ff;
-  --muted: #b8c2d6;
-  --on: #152239;
-  --cover: var(--night-art);
-  --shape: 8px;
-  --headline: ui-monospace, monospace;
+  --bg: #191c20; --paper: #222529; --light: #292d30; --mint: #3e352d;
+  --line: #43454a; --ink: #f3eee4; --muted: #c1bbb0; --accent: #e4bf89;
+  --on: #282018; --art-mat: #17191b; --shape: 6px; --headline: Georgia, "Songti SC", serif;
 }
 html[data-skin="abstract"] {
-  --bg: #fff9e9;
-  --paper: #fffdf5;
-  --light: #faefd3;
-  --mint: #f6e2ad;
-  --line: #2b2a31;
-  --ink: #20212a;
-  --accent: #244982;
-  --muted: #605c55;
-  --cover: var(--abstract-art);
-  --shape: 0px;
-  --headline: "Arial Black", var(--sans);
+  --bg: #f5f4f0; --paper: #fdfcf8; --light: #eeede7; --mint: #e2e8ed;
+  --line: #b4b5af; --ink: #232425; --muted: #575956; --accent: #26517c;
+  --art-mat: #e8e6e0; --shape: 0px; --headline: var(--sans);
 }
 html[data-skin="warm"] {
-  --bg: #fff5ec;
-  --paper: #fffaf3;
-  --light: #f9ecdf;
-  --mint: #f7e1ce;
-  --line: #e4cdbb;
-  --ink: #50392f;
-  --accent: #93553c;
-  --muted: #795e4f;
-  --cover: var(--warm-art);
-  --shape: 24px;
-  --headline: ui-rounded, "Songti SC", serif;
+  --bg: #f9f5ef; --paper: #fffbf6; --light: #f2ebe0; --mint: #e7e9db;
+  --line: #dbd0c2; --ink: #3b3229; --muted: #6b5d4e; --accent: #586143;
+  --art-mat: #e8ddcf; --shape: 14px; --headline: Georgia, "Songti SC", serif;
 }
 html[data-skin="jazz"] {
-  --bg: #edf1fc;
-  --paper: #fafbff;
-  --light: #e5eaf8;
-  --mint: #d9e4ff;
-  --line: #a9b8d7;
-  --ink: #1a2543;
-  --accent: #25458e;
-  --muted: #53617c;
-  --cover: var(--jazz-art);
-  --shape: 2px;
-  --headline: "Arial Narrow", var(--sans);
+  --bg: #f5f2eb; --paper: #fbf8f0; --light: #efeadf; --mint: #e1e6ed;
+  --line: #d2cbbd; --ink: #242a39; --muted: #60616b; --accent: #344569;
+  --art-mat: #e3dccf; --shape: 3px; --headline: var(--sans);
 }
 html[data-skin="coast"] {
-  --bg: #f2f6ed;
-  --paper: #fffdf1;
-  --light: #edf1e2;
-  --mint: #d9e9dd;
-  --line: #b9cdbd;
-  --ink: #284040;
-  --accent: #336964;
-  --muted: #536962;
-  --cover: var(--coast-art);
-  --shape: 4px 18px 4px 18px;
-  --headline: Georgia, "Songti SC", serif;
+  --bg: #f5f5ee; --paper: #fdfbf3; --light: #eeeee4; --mint: #e0e8e6;
+  --line: #ccd2cd; --ink: #273843; --muted: #55636a; --accent: #375974;
+  --art-mat: #e5e4d8; --shape: 5px; --headline: Georgia, "Songti SC", serif;
 }
 html[data-skin]:not([data-skin="classic"]) body {
   background: var(--bg);
@@ -340,65 +204,90 @@ html[data-skin]:not([data-skin="classic"])
   ) {
   border-radius: var(--shape);
 }
-html[data-skin]:not([data-skin="classic"]) :is(.dashHero, .welcome) {
-  position: relative;
-  isolation: isolate;
-  min-height: 145px;
-  background: var(--cover);
+html[data-skin]:not([data-skin="classic"]) :is(h1, h2, .brand b, .entryBrand strong) {
+  font-family: var(--headline);
+}
+html[data-skin]:not([data-skin="classic"]) :is(.welcome, .dashHero) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.22fr);
+  gap: 16px;
+  align-items: center;
+  padding: 18px 22px;
+  background: var(--paper);
   border-color: var(--line);
   border-radius: var(--shape);
 }
-html[data-skin]:not([data-skin="classic"]) :is(.dashHero, .welcome)::before {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  inset: 0;
-  background: linear-gradient(
-    90deg,
-    var(--paper) 2%,
-    color-mix(in srgb, var(--paper) 91%, transparent) 31%,
-    transparent 75%
-  );
+html[data-skin]:not([data-skin="classic"]) :is(.routeSketch, .welcomeIcons) {
+  display: none;
 }
-html[data-skin]:not([data-skin="classic"]) .routeSketch {
-  visibility: hidden;
-  width: 10%;
+html[data-skin]:not([data-skin="classic"]) .welcome {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 13px;
+  padding: 16px;
 }
-html[data-skin]:not([data-skin="classic"])
-  :is(h1, h2, .brand b, .entryBrand strong) {
-  font-family: var(--headline);
+html[data-skin]:not([data-skin="classic"]) .welcome > div {
+  grid-row: 2;
+  padding: 0 1px 2px;
 }
-html[data-skin="abstract"] :is(.week, .lane, .entryCard, .eventCard) {
-  box-shadow: 3px 3px 0 var(--ink);
-  border: 2px solid;
+html[data-skin]:not([data-skin="classic"]) .welcome p {
+  margin-top: 2px;
 }
-html[data-skin="abstract"] .weekDay {
-  border: 1px solid var(--line);
+html[data-skin="abstract"] :is(.week, .lane) { border-top: 3px solid var(--ink); }
+html[data-skin="jazz"] .sectionHead { border-bottom: 2px solid var(--ink); padding-bottom: 7px; }
+html[data-skin="night"] .taskBox { border-color: var(--muted); }
+html[data-skin="night"] .weekDay:not(.selected) small { color: var(--muted); }
+
+.artPlate { display: block; width: 100%; min-width: 0; padding: 0; text-align: start; }
+.artMat, .swatchMat {
+  display: grid; place-items: center; overflow: hidden; background: var(--art-mat);
 }
-html[data-skin="warm"] :is(.lane, .eventCard, .entryCard) {
-  box-shadow: 0 6px 15px #88431c0e;
+.artMat { height: clamp(150px, 22vw, 212px); padding: 9px; }
+.artMat img, .swatchMat img {
+  display: block; width: 100%; height: 100%; min-height: 0; object-fit: contain;
 }
-html[data-skin="jazz"] .sectionHead {
-  border-bottom: 3px solid var(--ink);
-  padding-bottom: 7px;
+.artCredit {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 7px 0 0; color: var(--muted);
 }
-html[data-skin="jazz"] .lane header {
-  border-left: 6px solid var(--accent);
+.artCredit > span { display: flex; flex-wrap: wrap; align-items: baseline; gap: 1px 8px; }
+.artCredit strong { font-size: 12px; font-weight: 650; color: var(--ink); }
+.artCredit small { font: 400 11px/1.45 var(--sans); letter-spacing: 0; }
+.artCredit > svg { flex-shrink: 0; }
+.skins { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.swatch {
+  display: flex; flex-direction: column; min-width: 0; padding: 0;
+  text-align: start; background: var(--paper); border: 1px solid var(--line); border-radius: 3px;
 }
-html[data-skin="pond"] .weekHead {
-  padding-bottom: 7px;
-  border-bottom: 1px dashed var(--line);
-  margin-bottom: 7px;
+.swatch[aria-pressed="true"] { outline: 2px solid var(--accent); outline-offset: 1px; }
+.swatchMat { width: 100%; height: clamp(72px, 12dvh, 100px); padding: 6px; }
+.swatchMat[data-work="pond"] { background: #e4e6dc; }
+.swatchMat[data-work="night"] { background: #282a2a; }
+.swatchMat[data-work="abstract"] { background: #e8e6e0; }
+.swatchMat[data-work="warm"] { background: #e8ddcf; }
+.swatchMat[data-work="jazz"] { background: #e3dccf; }
+.swatchMat[data-work="coast"] { background: #e5e4d8; }
+.swatchInfo { position: relative; display: block; width: 100%; padding: 7px 8px 9px; }
+.swatchInfo strong, .swatchInfo small { display: block; }
+.swatchInfo strong { font-size: 13px; line-height: 1.45; padding-right: 15px; }
+.swatchInfo small { color: var(--muted); margin-top: 2px; font-size: 10.5px; line-height: 1.45; }
+.skinCheck { position: absolute; right: 6px; top: 9px; color: var(--accent); }
+.skinActions { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 16px; }
+.artDetail { margin: 0; }
+.artDetail img { display: block; margin: auto; width: 100%; height: auto; max-height: 63dvh; object-fit: contain; }
+.artDetail figcaption { display: flex; flex-wrap: wrap; gap: 2px 10px; align-items: baseline; margin: 12px 0 3px; }
+.artDetail figcaption span, .collectionLink { color: var(--muted); font-size: 13px; }
+.collectionLink { display: inline-flex; align-items: center; gap: 4px; padding: 8px 0; text-underline-offset: 3px; }
+@media (min-width: 650px) {
+  .dialog:has(.artDetail) { width: min(760px, 90vw); }
 }
-html[data-skin="coast"] :is(.week, .entryCard, .eventCard) {
-  outline: 1px dashed var(--line);
-  outline-offset: -5px;
-}
-html[data-skin="night"] :is(.week, .eventCard, .scoreGrid article) {
-  box-shadow: inset 0 1px 0 #7184aa38;
-}
-html[data-skin="night"] .taskBox {
-  border-color: #8394b5;
+@media (max-width: 550px) {
+  html[data-skin]:not([data-skin="classic"]) .dashHero { gap: 12px; padding: 12px; }
+  .dashHero .artMat { height: clamp(90px, 26vw, 135px); padding: 4px; }
+  .dashHero .artCredit { align-items: flex-start; }
+  .dashHero .artCredit > span { display: block; }
+  .dashHero .artCredit small { display: block; }
+  .welcome .artMat { height: clamp(128px, 40vw, 180px); padding: 6px; }
+  .skins { gap: 9px; }
 }
 @media (max-width: 550px) {
   .topActions {
