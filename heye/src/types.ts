@@ -8,6 +8,8 @@ export type Event = {
 };
 export type Task = {
   self_task?: boolean;
+  difficulty?: 1 | 2 | 3;
+  recommended?: boolean;
   id: string;
   day: string;
   author: number;
@@ -28,6 +30,22 @@ export type Photo = {
 };
 export type Member = { slot: number; name: string };
 export type Board = {
+  events?: {
+    id: string;
+    title: string;
+    due: string;
+    first_at: string | null;
+    second_at: string | null;
+  }[];
+  balances?: Record<number, number>;
+  ledger?: {
+    source: string;
+    reason: "assign" | "task" | "recommend" | "event";
+    person: number;
+    amount: number;
+    title: string;
+    recorded: string;
+  }[];
   shelf?: ShelfItem[];
   finished?: Completion[];
   seat: number;
@@ -104,7 +122,7 @@ export type ShelfItem = {
 };
 export type Completion = {
   id: string;
-  kind: MediaKind | "task";
+  kind: MediaKind | "task" | "event";
   title: string;
   person: number;
   finished: string;

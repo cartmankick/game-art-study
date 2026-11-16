@@ -1,3 +1,6 @@
+import { Theme } from "./Theme";
+import { Calendar, Points, firstPointsDay } from "./Calendar";
+import { CalendarClock, Coins } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
   ArrowDownLeft,
@@ -79,7 +82,9 @@ function Dashboard({
 }) {
   const [day, setDay] = useState(initialDay),
     [today, setToday] = useState(initialDay),
-    [view, setView] = useState<"day" | "history" | "finished" | "shelf">("day"),
+    [view, setView] = useState<
+      "day" | "history" | "finished" | "shelf" | "events" | "points"
+    >("day"),
     [filter, setFilter] = useState("all");
   const [board, setBoard] = useState<Board>(emptyBoard),
     [modal, setModal] = useState<Modal | null>(
@@ -90,6 +95,7 @@ function Dashboard({
     [busy, setBusy] = useState(false),
     [loading, setLoading] = useState(true),
     [toast, setToast] = useState("");
+  const [historyType, setHistoryType] = useState("all");
   const seq = useRef(0),
     active = useRef(true),
     locked = useRef(false),
@@ -195,6 +201,7 @@ function Dashboard({
         await request({
           action: "create",
           target: f.target,
+          difficulty: f.difficulty || 1,
           day: f.day,
           title: f.title,
           detail: f.detail,
@@ -233,6 +240,7 @@ function Dashboard({
       ? board.tasks.find((t) => t.id === modal.id)
       : null;
   function navHistory() {
+    setHistoryType("all");
     setView("finished");
   }
   return (
@@ -267,11 +275,32 @@ function Dashboard({
               <History size={17} />
               历史记录
             </button>
+            <button
+              className={view === "events" ? "active" : ""}
+              onClick={() => setView("events")}
+            >
+              <CalendarClock size={17} />
+              事件
+            </button>
           </nav>
-          <button className="secondary" onClick={() => show({ type: "space" })}>
-            <UsersRound size={16} />
-            我们俩
-          </button>
+          <div className="topActions">
+            <Theme />
+            <button
+              className="secondary"
+              aria-label="积分"
+              onClick={() => setView("points")}
+            >
+              <Coins size={17} />
+              积分
+            </button>
+            <button
+              className="secondary"
+              onClick={() => show({ type: "space" })}
+            >
+              <UsersRound size={16} />
+              我们俩
+            </button>
+          </div>
         </div>
       </header>
       <main className="main">
@@ -279,13 +308,17 @@ function Dashboard({
           <div>
             <small>{dateLabel(day, true)}</small>
             <h1>
-              {view === "shelf"
-                ? "书影音清单"
-                : view === "history" || view === "finished"
-                  ? "历史记录"
-                  : day === today
-                    ? "今天的任务"
-                    : "当天的任务"}
+              {view === "events"
+                ? "事件倒计时"
+                : view === "points"
+                  ? "积分账本"
+                  : view === "shelf"
+                    ? "书影音清单"
+                    : view === "history" || view === "finished"
+                      ? "历史记录"
+                      : day === today
+                        ? "今天的任务"
+                        : "当天的任务"}
             </h1>
             <p>
               {board.seat ? name(board.seat) + " 与 " + partner : "双人空间"}
@@ -314,7 +347,20 @@ function Dashboard({
             </button>
           </nav>
         )}
-        {view === "shelf" ? (
+        {view === "events" ? (
+          <Calendar
+            board={board}
+            loading={loading}
+            name={name}
+            refresh={() => latestRefresh.current(undefined, true)}
+            history={() => {
+              setHistoryType("event");
+              setView("finished");
+            }}
+          />
+        ) : view === "points" ? (
+          <Points board={board} loading={loading} name={name} />
+        ) : view === "shelf" ? (
           <Shelf
             board={board}
             loading={loading}
@@ -322,7 +368,12 @@ function Dashboard({
             refresh={() => latestRefresh.current(undefined, true)}
           />
         ) : view === "finished" ? (
-          <Finished board={board} loading={loading} name={name} />
+          <Finished
+            initialType={historyType}
+            board={board}
+            loading={loading}
+            name={name}
+          />
         ) : view === "day" ? (
           <>
             <WeekStrip
@@ -520,6 +571,13 @@ function Dashboard({
           <History />
           历史
         </button>
+        <button
+          className={view === "events" ? "active" : ""}
+          onClick={() => setView("events")}
+        >
+          <CalendarClock />
+          事件
+        </button>
       </nav>
       {toast && (
         <div className="toast" role="status">
@@ -600,8 +658,24 @@ function Dashboard({
                   <select name="target" defaultValue="partner">
                     <option value="partner">给对方 · {partner}</option>
                     <option value="self">给自己</option>
+                    {today >= firstPointsDay && (
+                      <option value="recommend">
+                        推荐给对方 · 完成得 10 分
+                      </option>
+                    )}
                   </select>
                 </label>
+                {today >= firstPointsDay && (
+                  <label>
+                    任务难度
+                    <select name="difficulty" defaultValue="1">
+                      <option value="1">易 · 完成 +2 / 布置 −1</option>
+                      <option value="2">中 · 完成 +4 / 布置 −2</option>
+                      <option value="3">难 · 完成 +6 / 布置 −3</option>
+                    </select>
+                    <small>给自己免费；推荐任务的完成奖励固定为 10 分。</small>
+                  </label>
+                )}
                 <label>
                   任务内容
                   <input
@@ -680,6 +754,14 @@ function Dashboard({
             </small>
           </div>
           <h3 className="taskTitle">{detail.title}</h3>
+          {detail.difficulty && (
+            <p className="muted">
+              {["", "易", "中", "难"][detail.difficulty]} ·{" "}
+              {detail.recommended
+                ? "对方推荐 · 完成 +10 分"
+                : "完成 +" + 2 * detail.difficulty + " 分"}
+            </p>
+          )}
           {detail.detail && <p className="detailText">{detail.detail}</p>}
           <h4>进展记录</h4>
           <ol className="timeline">

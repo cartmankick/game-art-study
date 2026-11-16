@@ -1,0 +1,419 @@
+/* Cover artwork also serves as the visual key in the skin picker. */
+:root {
+  --pond-art: url("./pond.webp") center 46% / cover;
+  --night-art:
+    radial-gradient(circle at 75% 31%, #f4e5b8 0 5%, transparent 5.4%),
+    radial-gradient(ellipse at 84% 140%, #617498 0 38%, transparent 38.6%),
+    radial-gradient(ellipse at 28% 135%, #334362 0 42%, transparent 43%),
+    radial-gradient(circle at 21% 18%, #cad3eb 0 1px, transparent 2px) 0 0/47px
+      37px,
+    #141b33;
+  --abstract-art:
+    radial-gradient(circle at 78% 40%, #ffcf40 0 15%, transparent 15.6%),
+    linear-gradient(88deg, transparent 58%, #171820 58% 60%, transparent 60%),
+    linear-gradient(
+      143deg,
+      #f7ecd1 0 28%,
+      #1e62a0 28% 50%,
+      #e66640 50% 74%,
+      #f4ba3b 74%
+    );
+  --warm-art:
+    radial-gradient(ellipse at 66% 95%, #e3ac88 0 20%, transparent 21%),
+    radial-gradient(ellipse at 91% 58%, #db967a 0 24%, transparent 25%),
+    repeating-linear-gradient(90deg, #fae7ce 0 10px, #f6dfc3 10px 12px);
+  --jazz-art:
+    radial-gradient(
+      circle at 78% 54%,
+      #f4c34c 0 3%,
+      #20284a 3.5% 8%,
+      transparent 8.5%
+    ),
+    repeating-radial-gradient(
+        circle at 78% 54%,
+        #16203f 0 3%,
+        #364771 3.1% 3.7%,
+        #1e2c51 3.8% 5%,
+        transparent 5.1% 8%
+      )
+      100% 50% / 58% 150% no-repeat,
+    linear-gradient(112deg, #314fb2 0 64%, #92b6e5 64%);
+  --coast-art:
+    radial-gradient(circle at 79% 25%, #f6bc64 0 7%, transparent 7.5%),
+    radial-gradient(ellipse at 10% 132%, #29696f 0 38%, transparent 38.5%),
+    radial-gradient(ellipse at 67% 131%, #8ebdb0 0 58%, transparent 58.5%),
+    linear-gradient(#b5d9da 0 55%, #f6e5bb 55%);
+}
+.topActions,
+.countLabel,
+.eventPeople {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.entryBrand > .themeOpen {
+  margin-left: auto;
+}
+.skins {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.swatch {
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  padding: 0;
+  overflow: hidden;
+  text-align: left;
+  color: var(--ink);
+}
+.swatch > span {
+  display: block;
+  height: 57px;
+}
+.swatch b {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 10px;
+  font-size: 13px;
+}
+.swatch[aria-pressed="true"] {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+[data-swatch="pond"] {
+  background: var(--pond-art);
+}
+[data-swatch="night"] {
+  background: var(--night-art);
+}
+[data-swatch="abstract"] {
+  background: var(--abstract-art);
+}
+[data-swatch="warm"] {
+  background: var(--warm-art);
+}
+[data-swatch="jazz"] {
+  background: var(--jazz-art);
+}
+[data-swatch="coast"] {
+  background: var(--coast-art);
+}
+.eventCard,
+.scoreGrid article {
+  margin: 12px 0;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: var(--shape, 14px);
+  background: var(--paper, white);
+}
+.eventCard h3 {
+  font-size: 21px;
+  margin: 7px 0;
+  overflow-wrap: anywhere;
+}
+.eventPeople {
+  flex-wrap: wrap;
+  margin: 10px 0 14px;
+}
+.eventPeople span,
+.countLabel {
+  color: var(--accent);
+}
+.eventPeople span {
+  background: var(--mint);
+  border-radius: 16px;
+  padding: 4px 10px;
+  font-size: 12px;
+}
+.scoreGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+.scoreGrid article {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 0;
+}
+.scoreGrid strong {
+  font: 700 32px/1.2 var(--sans);
+}
+.scoreGrid small {
+  font-size: 13px;
+}
+.eventCard summary {
+  cursor: pointer;
+  font-weight: 650;
+}
+.eventCard p {
+  margin-top: 6px;
+}
+.ledgerHead {
+  margin: 20px 0 8px;
+}
+.ledgerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  padding: 10px 0;
+  gap: 8px;
+}
+.ledgerRow div {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.ledgerRow small {
+  display: block;
+}
+.ledgerRow b {
+  color: var(--accent);
+}
+html[data-skin="pond"] {
+  --bg: #f3f5ef;
+  --paper: #fbfcf7;
+  --light: #edf1e8;
+  --mint: #dfe9dc;
+  --line: #cad8ca;
+  --ink: #293630;
+  --accent: #486750;
+  --muted: #56685f;
+  --cover: var(--pond-art);
+  --shape: 19px 8px 19px 8px;
+  --headline: Georgia, "Songti SC", serif;
+}
+html[data-skin="night"] {
+  color-scheme: dark;
+  --bg: #101622;
+  --paper: #1b2333;
+  --light: #242e42;
+  --mint: #2c3951;
+  --line: #3b4961;
+  --ink: #e8efff;
+  --accent: #a9c5ff;
+  --muted: #b8c2d6;
+  --on: #152239;
+  --cover: var(--night-art);
+  --shape: 8px;
+  --headline: ui-monospace, monospace;
+}
+html[data-skin="abstract"] {
+  --bg: #fff9e9;
+  --paper: #fffdf5;
+  --light: #faefd3;
+  --mint: #f6e2ad;
+  --line: #2b2a31;
+  --ink: #20212a;
+  --accent: #244982;
+  --muted: #605c55;
+  --cover: var(--abstract-art);
+  --shape: 0px;
+  --headline: "Arial Black", var(--sans);
+}
+html[data-skin="warm"] {
+  --bg: #fff5ec;
+  --paper: #fffaf3;
+  --light: #f9ecdf;
+  --mint: #f7e1ce;
+  --line: #e4cdbb;
+  --ink: #50392f;
+  --accent: #93553c;
+  --muted: #795e4f;
+  --cover: var(--warm-art);
+  --shape: 24px;
+  --headline: ui-rounded, "Songti SC", serif;
+}
+html[data-skin="jazz"] {
+  --bg: #edf1fc;
+  --paper: #fafbff;
+  --light: #e5eaf8;
+  --mint: #d9e4ff;
+  --line: #a9b8d7;
+  --ink: #1a2543;
+  --accent: #25458e;
+  --muted: #53617c;
+  --cover: var(--jazz-art);
+  --shape: 2px;
+  --headline: "Arial Narrow", var(--sans);
+}
+html[data-skin="coast"] {
+  --bg: #f2f6ed;
+  --paper: #fffdf1;
+  --light: #edf1e2;
+  --mint: #d9e9dd;
+  --line: #b9cdbd;
+  --ink: #284040;
+  --accent: #336964;
+  --muted: #536962;
+  --cover: var(--coast-art);
+  --shape: 4px 18px 4px 18px;
+  --headline: Georgia, "Songti SC", serif;
+}
+html[data-skin]:not([data-skin="classic"]) body {
+  background: var(--bg);
+  color: var(--ink);
+}
+html[data-skin]:not([data-skin="classic"])
+  :is(
+    .week,
+    .lane,
+    .archive,
+    .dialog,
+    .entryCard,
+    .photoBlank,
+    .secondary,
+    .iconBtn,
+    .todayBtn,
+    .top,
+    .pocketNav,
+    input,
+    textarea,
+    select,
+    .pill
+  ) {
+  background: var(--paper);
+  color: var(--ink);
+  border-color: var(--line);
+}
+html[data-skin]:not([data-skin="classic"])
+  :is(
+    .entryTabs,
+    .lane header,
+    .entryTabs button.active,
+    .sectionHead h2 small,
+    .initial,
+    .quote,
+    .laneIcon
+  ) {
+  background: var(--light);
+  color: var(--ink);
+}
+html[data-skin]:not([data-skin="classic"])
+  :is(
+    .brand b,
+    .entryBrand strong,
+    .pocketNav .active,
+    .timeline,
+    .weekDay:not(.selected),
+    .photoBlank,
+    .laneIcon
+  ) {
+  color: var(--ink);
+}
+html[data-skin]:not([data-skin="classic"])
+  :is(
+    .pocketNav button:not(.active),
+    .entryTabs button:not(.active),
+    .photoBlank small,
+    .pill
+  ) {
+  color: var(--muted);
+}
+html[data-skin]:not([data-skin="classic"])
+  :is(
+    .primary,
+    .brandMark,
+    .weekDay.selected,
+    .weekDay.selected small,
+    .shelfFilters button[aria-pressed="true"],
+    .taskBox.checked
+  ) {
+  background: var(--accent);
+  color: var(--on, white);
+}
+html[data-skin]:not([data-skin="classic"]) .brandMark svg {
+  fill: currentColor;
+}
+html[data-skin]:not([data-skin="classic"])
+  :is(
+    .week,
+    .lane,
+    .archive,
+    .entryCard,
+    .dialog,
+    .photoBlank,
+    .primary,
+    .secondary,
+    .weekDay
+  ) {
+  border-radius: var(--shape);
+}
+html[data-skin]:not([data-skin="classic"]) :is(.dashHero, .welcome) {
+  position: relative;
+  isolation: isolate;
+  min-height: 145px;
+  background: var(--cover);
+  border-color: var(--line);
+  border-radius: var(--shape);
+}
+html[data-skin]:not([data-skin="classic"]) :is(.dashHero, .welcome)::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    var(--paper) 2%,
+    color-mix(in srgb, var(--paper) 91%, transparent) 31%,
+    transparent 75%
+  );
+}
+html[data-skin]:not([data-skin="classic"]) .routeSketch {
+  visibility: hidden;
+  width: 10%;
+}
+html[data-skin]:not([data-skin="classic"])
+  :is(h1, h2, .brand b, .entryBrand strong) {
+  font-family: var(--headline);
+}
+html[data-skin="abstract"] :is(.week, .lane, .entryCard, .eventCard) {
+  box-shadow: 3px 3px 0 var(--ink);
+  border: 2px solid;
+}
+html[data-skin="abstract"] .weekDay {
+  border: 1px solid var(--line);
+}
+html[data-skin="warm"] :is(.lane, .eventCard, .entryCard) {
+  box-shadow: 0 6px 15px #88431c0e;
+}
+html[data-skin="jazz"] .sectionHead {
+  border-bottom: 3px solid var(--ink);
+  padding-bottom: 7px;
+}
+html[data-skin="jazz"] .lane header {
+  border-left: 6px solid var(--accent);
+}
+html[data-skin="pond"] .weekHead {
+  padding-bottom: 7px;
+  border-bottom: 1px dashed var(--line);
+  margin-bottom: 7px;
+}
+html[data-skin="coast"] :is(.week, .entryCard, .eventCard) {
+  outline: 1px dashed var(--line);
+  outline-offset: -5px;
+}
+html[data-skin="night"] :is(.week, .eventCard, .scoreGrid article) {
+  box-shadow: inset 0 1px 0 #7184aa38;
+}
+html[data-skin="night"] .taskBox {
+  border-color: #8394b5;
+}
+@media (max-width: 550px) {
+  .topActions {
+    gap: 4px;
+  }
+  .topActions .secondary {
+    padding-inline: 8px;
+  }
+  .topActions .themeOpen span {
+    display: none;
+  }
+  .entryBrand .themeOpen {
+    font-size: 13px;
+  }
+  .mainNav {
+    gap: 0;
+  }
+}

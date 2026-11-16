@@ -19,9 +19,9 @@ const media = {
 };
 const kinds = Object.keys(media) as MediaKind[];
 const label = (kind: Completion["kind"]) =>
-  kind === "task" ? "任务" : media[kind].label;
+  kind === "event" ? "共同事件" : kind === "task" ? "任务" : media[kind].label;
 const verb = (kind: Completion["kind"]) =>
-  kind === "task" ? "完成" : media[kind].verb;
+  kind === "task" || kind === "event" ? "完成" : media[kind].verb;
 type Props = { board: Board; loading: boolean; name: (s: number) => string };
 export function Shelf({
   board,
@@ -207,12 +207,18 @@ export function Shelf({
     </section>
   );
 }
-export function Finished({ board, loading, name }: Props) {
+export function Finished({
+  board,
+  loading,
+  name,
+  initialType = "all",
+}: Props & { initialType?: string }) {
   const [person, setPerson] = useState(0),
-    [type, setType] = useState("all");
+    [type, setType] = useState(initialType);
   const rows = (board.finished ?? []).filter(
     (x) =>
-      (!person || x.person === person) && (type === "all" || x.kind === type),
+      (!person || x.person === 0 || x.person === person) &&
+      (type === "all" || x.kind === type),
   );
   const date = new Intl.DateTimeFormat("zh-CN", {
     timeZone: "Asia/Shanghai",
@@ -241,7 +247,7 @@ export function Finished({ board, loading, name }: Props) {
           类别
           <select value={type} onChange={(e) => setType(e.target.value)}>
             <option value="all">全部类别</option>
-            {(["task", ...kinds] as const).map((k) => (
+            {(["task", "event", ...kinds] as const).map((k) => (
               <option key={k} value={k}>
                 {label(k)}
               </option>
@@ -263,7 +269,8 @@ export function Finished({ board, loading, name }: Props) {
                   <Check size={16} />
                   <div className="workTitle">
                     <small>
-                      {name(x.person)} · 已{verb(x.kind)} · {label(x.kind)}
+                      {x.person === 0 ? "两人" : name(x.person)} · 已
+                      {verb(x.kind)} · {label(x.kind)}
                     </small>
                     <strong>{x.title}</strong>
                   </div>

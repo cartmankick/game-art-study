@@ -1,3 +1,4 @@
+import { Theme } from "./Theme";
 import { useEffect, useRef, useState } from "react";
 import {
   ArrowUpRight,
@@ -123,6 +124,7 @@ export default function Entry({ onEnter }: { onEnter: () => void }) {
       <div className="entryBrand">
         <Mark />
         <strong>出发</strong>
+        <Theme />
       </div>
       <section className="welcome">
         <div>
