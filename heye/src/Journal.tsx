@@ -379,10 +379,9 @@ function Dashboard({
                   items: board.tasks.filter(
                     (t) => t.self_task && t.author !== board.seat,
                   ),
-                  empty: "",
+                  empty: partner + "当天还没有给自己的任务",
                 },
               ].map(({ key, title, items, empty }) => {
-                if (key === "partner" && !items.length) return null;
                 return (
                   <section key={key} className={"lane " + key}>
                     <header>
