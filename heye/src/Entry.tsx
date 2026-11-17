@@ -301,6 +301,7 @@ export default function Entry({ onEnter }: { onEnter: () => void }) {
               <ArrowUpRight size={17} />
             </button>
           </form>
+          {mode === "login" && <details><summary>忘记个人注册码？</summary><p>请让空间创建者登录，打开「我们俩 → 帮伙伴重设注册码」，把一次性链接私发给你。打开链接即可设置新码。</p></details>}
         </section>
       )}
     </main>

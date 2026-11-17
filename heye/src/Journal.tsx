@@ -1,3 +1,4 @@
+import { Recovery } from "./Recovery";
 import { SkinDate, Theme } from "./Theme";
 import { Calendar, Points, firstPointsDay } from "./Calendar";
 import { CalendarClock, Coins } from "lucide-react";
@@ -608,6 +609,7 @@ function Dashboard({
               </div>
             ))}
           </div>
+          {board.seat === 1 && board.members.some(m => m.slot === 2) && <details><summary>帮伙伴重设注册码</summary><Recovery owner /></details>}
           {board.seat === 1 && (
             <button
               className="primary wide"
