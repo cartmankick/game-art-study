@@ -1,5 +1,3 @@
-import { TaskShare, taskFromLink } from "./TaskShare";
-import type { SharedTask } from "./TaskShare";
 import { Recovery } from "./Recovery";
 import { SkinDate, Theme } from "./Theme";
 import { Calendar, Points, firstPointsDay } from "./Calendar";
@@ -30,13 +28,12 @@ import { Shelf, Finished } from "./Shelf";
 import Invitation from "./Invitation";
 import { ApiError, hasSession, leave, request } from "./client";
 import { Dialog, TaskLine, WeekStrip } from "./parts";
-import { dateLabel, emptyBoard, statusLabel, todayCN } from "./types";
+import { dateLabel, emptyBoard, statusLabel, todayCN, validDay } from "./types";
 import type { Board, Task } from "./types";
 type FormAction = "submit" | "approve" | "return";
 type Modal =
   | { type: "space" }
   | { type: "invitation" }
-  | { type: "published"; summary: SharedTask }
   | { type: "create" }
   | { type: "detail"; id: string }
   | { type: FormAction; task: Task };
@@ -55,6 +52,14 @@ const stamp = (s: string) =>
     minute: "2-digit",
     hour12: false,
   }).format(new Date(s));
+function taskFromLink() {
+  const params = new URLSearchParams(location.search);
+  const day = params.get("day");
+  const id = params.get("task");
+  if (!validDay(day) || !id || !/^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$/i.test(id)) return null;
+  return { day, id: id.toLowerCase() };
+}
+
 export default function Journal({ initialDay }: { initialDay: string }) {
   const [signed, setSigned] = useState(hasSession);
   const [openInvite, setOpenInvite] = useState(
@@ -130,7 +135,7 @@ function Dashboard({
         if (link && view === "day" && day === link.day) {
           pendingLink.current = null;
           if (result.tasks.some(task => task.id === link.id)) setModal({ type: "detail", id: link.id });
-          else setToast("未找到分享的任务。");
+          else setToast("未找到这项任务。");
         }
         setError("");
       } catch (e) {
@@ -208,7 +213,6 @@ function Dashboard({
     setBusy(true);
     setFormError("");
     const f = Object.fromEntries(new FormData(e.currentTarget));
-    let nextModal: Modal | null = null;
     try {
       if (modal.type === "create") {
         await request({
@@ -221,11 +225,7 @@ function Dashboard({
           id: newId.current,
         });
         choose(String(f.day));
-        if (f.target === "self") setToast("已加入我的个人任务");
-        else nextModal = {
-          type: "published",
-          summary: { id: newId.current, day: String(f.day), title: String(f.title).trim(), status: "todo" },
-        };
+        setToast(f.target === "self" ? "已加入我的个人任务" : "任务已发给" + partner);
       } else if ("task" in modal) {
         await request({
           action: modal.type,
@@ -241,7 +241,7 @@ function Dashboard({
               : "已提交给对方确认",
         );
       }
-      setModal(nextModal);
+      setModal(null);
       await latestRefresh.current(undefined, true);
     } catch (e) {
       setFormError(e instanceof Error ? e.message : "操作失败，请重试。");
@@ -604,13 +604,6 @@ function Dashboard({
       {modal?.type === "invitation" && (
         <Invitation close={close} onExit={onExit} />
       )}
-      {modal?.type === "published" && (
-        <Dialog title="任务已发布" close={close}>
-          <h3 className="taskTitle">{modal.summary.title}</h3>
-          <p className="muted">{modal.summary.day} · 给{partner}</p>
-          <TaskShare task={modal.summary} />
-        </Dialog>
-      )}
       {modal?.type === "space" && (
         <Dialog title="我们俩" close={close}>
           <div className="people">
@@ -787,7 +780,6 @@ function Dashboard({
             </p>
           )}
           {detail.detail && <p className="detailText">{detail.detail}</p>}
-          {!detail.self_task && <TaskShare key={detail.id} task={detail} />}
           <h4>进展记录</h4>
           <ol className="timeline">
             {[
