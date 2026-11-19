@@ -1,11 +1,11 @@
-import { WechatReminders } from "./WechatReminders";
+import { TaskShare, taskFromLink } from "./TaskShare";
+import type { SharedTask } from "./TaskShare";
 import { Recovery } from "./Recovery";
 import { SkinDate, Theme } from "./Theme";
 import { Calendar, Points, firstPointsDay } from "./Calendar";
 import { CalendarClock, Coins } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
-  Bell,
   ArrowDownLeft,
   ArrowUpRight,
   CalendarDays,
@@ -36,7 +36,7 @@ type FormAction = "submit" | "approve" | "return";
 type Modal =
   | { type: "space" }
   | { type: "invitation" }
-  | { type: "wechat" }
+  | { type: "published"; summary: SharedTask }
   | { type: "create" }
   | { type: "detail"; id: string }
   | { type: FormAction; task: Task };
@@ -84,7 +84,9 @@ function Dashboard({
   openInvite: boolean;
   onExit: () => void;
 }) {
-  const [day, setDay] = useState(initialDay),
+  const [shared] = useState(taskFromLink);
+  const pendingLink = useRef(shared);
+  const [day, setDay] = useState(shared?.day ?? initialDay),
     [today, setToday] = useState(initialDay),
     [view, setView] = useState<
       "day" | "history" | "finished" | "shelf" | "events" | "points"
@@ -124,6 +126,12 @@ function Dashboard({
             ? { ...result, history: [...prev.history, ...result.history] }
             : result,
         );
+        const link = pendingLink.current;
+        if (link && view === "day" && day === link.day) {
+          pendingLink.current = null;
+          if (result.tasks.some(task => task.id === link.id)) setModal({ type: "detail", id: link.id });
+          else setToast("未找到分享的任务。");
+        }
         setError("");
       } catch (e) {
         if (!active.current || n !== seq.current) return;
@@ -200,6 +208,7 @@ function Dashboard({
     setBusy(true);
     setFormError("");
     const f = Object.fromEntries(new FormData(e.currentTarget));
+    let nextModal: Modal | null = null;
     try {
       if (modal.type === "create") {
         await request({
@@ -212,9 +221,11 @@ function Dashboard({
           id: newId.current,
         });
         choose(String(f.day));
-        setToast(
-          f.target === "self" ? "已加入我的个人任务" : "任务已发给" + partner,
-        );
+        if (f.target === "self") setToast("已加入我的个人任务");
+        else nextModal = {
+          type: "published",
+          summary: { id: newId.current, day: String(f.day), title: String(f.title).trim(), status: "todo" },
+        };
       } else if ("task" in modal) {
         await request({
           action: modal.type,
@@ -230,7 +241,7 @@ function Dashboard({
               : "已提交给对方确认",
         );
       }
-      setModal(null);
+      setModal(nextModal);
       await latestRefresh.current(undefined, true);
     } catch (e) {
       setFormError(e instanceof Error ? e.message : "操作失败，请重试。");
@@ -593,7 +604,13 @@ function Dashboard({
       {modal?.type === "invitation" && (
         <Invitation close={close} onExit={onExit} />
       )}
-      {modal?.type === "wechat" && <WechatReminders close={close} onExit={onExit} />}
+      {modal?.type === "published" && (
+        <Dialog title="任务已发布" close={close}>
+          <h3 className="taskTitle">{modal.summary.title}</h3>
+          <p className="muted">{modal.summary.day} · 给{partner}</p>
+          <TaskShare task={modal.summary} />
+        </Dialog>
+      )}
       {modal?.type === "space" && (
         <Dialog title="我们俩" close={close}>
           <div className="people">
@@ -613,10 +630,6 @@ function Dashboard({
               </div>
             ))}
           </div>
-          <button className="secondary wide" onClick={() => show({ type: "wechat" })}>
-            <Bell size={17} />
-            微信提醒
-          </button>
           {board.seat === 1 && board.members.some(m => m.slot === 2) && <details><summary>帮伙伴重设注册码</summary><Recovery owner /></details>}
           {board.seat === 1 && (
             <button
@@ -774,6 +787,7 @@ function Dashboard({
             </p>
           )}
           {detail.detail && <p className="detailText">{detail.detail}</p>}
+          {!detail.self_task && <TaskShare key={detail.id} task={detail} />}
           <h4>进展记录</h4>
           <ol className="timeline">
             {[
