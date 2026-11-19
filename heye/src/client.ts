@@ -49,6 +49,24 @@ export async function request(payload: Record<string, unknown>) {
   });
   return unpack(r);
 }
+export type WechatStatus = {
+  enabled: boolean;
+  delivery?: "pending" | "accepted" | "failed" | "unknown";
+};
+
+export async function wechatReminder(action: string, sendKey?: string): Promise<WechatStatus> {
+  const url = new URL("wechat-reminders", endpoint);
+  const response = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({action, session, sendKey}),
+    cache: "no-store",
+    referrerPolicy: "no-referrer",
+    signal: AbortSignal.timeout(30000),
+  });
+  return unpack(response);
+}
+
 export function invitationLink(code: string) {
   const url = new URL("./", location.href);
   url.hash = "join=" + encodeURIComponent(code);

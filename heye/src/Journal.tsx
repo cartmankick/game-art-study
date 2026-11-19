@@ -1,9 +1,11 @@
+import { WechatReminders } from "./WechatReminders";
 import { Recovery } from "./Recovery";
 import { SkinDate, Theme } from "./Theme";
 import { Calendar, Points, firstPointsDay } from "./Calendar";
 import { CalendarClock, Coins } from "lucide-react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import {
+  Bell,
   ArrowDownLeft,
   ArrowUpRight,
   CalendarDays,
@@ -34,6 +36,7 @@ type FormAction = "submit" | "approve" | "return";
 type Modal =
   | { type: "space" }
   | { type: "invitation" }
+  | { type: "wechat" }
   | { type: "create" }
   | { type: "detail"; id: string }
   | { type: FormAction; task: Task };
@@ -590,6 +593,7 @@ function Dashboard({
       {modal?.type === "invitation" && (
         <Invitation close={close} onExit={onExit} />
       )}
+      {modal?.type === "wechat" && <WechatReminders close={close} onExit={onExit} />}
       {modal?.type === "space" && (
         <Dialog title="我们俩" close={close}>
           <div className="people">
@@ -609,6 +613,10 @@ function Dashboard({
               </div>
             ))}
           </div>
+          <button className="secondary wide" onClick={() => show({ type: "wechat" })}>
+            <Bell size={17} />
+            微信提醒
+          </button>
           {board.seat === 1 && board.members.some(m => m.slot === 2) && <details><summary>帮伙伴重设注册码</summary><Recovery owner /></details>}
           {board.seat === 1 && (
             <button
